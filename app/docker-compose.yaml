@@ -1,0 +1,41 @@
+version: "3"
+services:
+  #Django REST backend
+  backend:
+    build:
+      context:
+        ./backend
+    command: ["python",  "manage.py", "runserver", "0.0.0.0.5000"]
+    container_name: django-backend
+    image: django-backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - backend-database
+    volumes:
+      - ./backend:/code
+
+  #PostgreSQL database
+  backend-database:
+    container_name: postgres_database
+    image: postgres:12-alpine
+    volumes:
+      - database_data:/var/lib/postgresql/data
+
+  #React frontend
+  frontend:
+    build:
+      context: 
+        ./frontend
+    command: npm start
+    container_name: react-frontend
+    image: react-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/frontend
+      - node_modules:/frontend/node_modules
+
+volumes:
+  database_data: 
+  node_modules:
